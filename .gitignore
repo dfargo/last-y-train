@@ -12,5 +12,7 @@ dist/
 .idea/
 htmlcov/
 .mypy_cache/
+.ruff_cache/
+.tox/
 env/
 ```
