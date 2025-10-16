@@ -11,4 +11,6 @@ dist/
 .coverage
 .idea/
 htmlcov/
+.mypy_cache/
+env/
 ```
