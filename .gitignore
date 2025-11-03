@@ -16,9 +16,11 @@ htmlcov/
 .tox/
 env/
 .DS_Store
+Thumbs.db
 .ipynb_checkpoints/
 *.pyc
 *.log
 *.swp
 _build/
+site/
 ```
