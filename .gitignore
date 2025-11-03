@@ -19,4 +19,6 @@ env/
 .ipynb_checkpoints/
 *.pyc
 *.log
+*.swp
+_build/
 ```
