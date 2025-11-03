@@ -15,4 +15,6 @@ htmlcov/
 .ruff_cache/
 .tox/
 env/
+.DS_Store
+.ipynb_checkpoints/
 ```
