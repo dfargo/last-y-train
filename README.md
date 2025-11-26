@@ -1,6 +1,6 @@
 # Last-Y-Train: Cross-Chain Bridge Event Listener Simulation
 
-This repository contains a Python-based simulation of a critical component for a cross-chain bridge: the Event Listener. This component, often run by validators or oracles, is responsible for watching for specific events on a source blockchain (e.g., tokens being locked) and initiating corresponding actions on a destination blockchain (e.g., minting wrapped tokens).
+This repository contains a Python-based simulation of a critical component for a cross-chain bridge: the Event Listener. This component—often run by validators or oracles—is responsible for watching for specific events on a source blockchain (e.g., tokens being locked) and initiating corresponding actions on a destination blockchain (e.g., minting wrapped tokens).
 
 This script is designed to be architecturally sound and robust, demonstrating the patterns used in real-world decentralized application backend services.
 
@@ -9,10 +9,10 @@ This script is designed to be architecturally sound and robust, demonstrating th
 A cross-chain bridge allows users to transfer assets or data from one blockchain to another. A common pattern is "lock-and-mint":
 
 1.  **Lock**: A user sends tokens to a bridge contract on the **Source Chain**. The contract locks these tokens and emits an event (e.g., `BridgeTransferInitiated`) containing details of the transaction.
-2.  **Verify**: Off-chain services, known as listeners, oracles, or validators, monitor the Source Chain for these events.
+2.  **Verify**: Off-chain services (known as listeners, oracles, or validators) monitor the Source Chain for these events.
 3.  **Mint/Release**: After verifying the event, these services submit a signed transaction to a corresponding bridge contract on the **Destination Chain**. This transaction authorizes the minting or releasing of an equivalent amount of wrapped tokens to the user's address on the new chain.
 
-This script simulates the **Verify** and **Mint/Release** steps. It connects to a source chain, polls for new blocks, filters for `BridgeTransferInitiated` events, and then prepares and signs a transaction to complete the bridge transfer on the destination chain. For safety, the final step of broadcasting the transaction is simulated by logging the signed transaction hash.
+This script simulates the **Verify** and **Mint/Release** steps. It connects to a source chain, polls for new blocks, filters for `BridgeTransferInitiated` events, and then prepares and signs a transaction to complete the bridge transfer on the destination chain. For safety, the final step of broadcasting the transaction is simulated by logging the signed transaction.
 
 ## Code Architecture
 
@@ -40,14 +40,22 @@ The script is designed with a clear separation of concerns, organized into sever
     -   Filtering blocks for relevant events from the source bridge contract.
     -   Passing any found events to the `BridgeEventHandler` for processing.
     -   Handling RPC connection errors and other exceptions gracefully.
+    
+    A conceptual example of its usage in `main.py`:
+    ```python
+    if __name__ == "__main__":
+        config = BridgeConfig.load_from_env()
+        listener = BridgeEventListener(config)
+        listener.run()
+    ```
 
 ## How it Works
 
 The script follows a logical, sequential flow:
 
-1.  **Initialization**: Upon starting, the script loads necessary configuration from a `.env` file.
+1.  **Initialization**: Upon starting, the script loads the necessary configuration from a `.env` file.
 2.  **Connection**: The `BridgeEventListener` creates two `ChainConnector` instances, one for the source chain and one for the destination chain, establishing a connection to their respective RPC nodes.
-3.  **State Restoration**: It determines the starting block to scan. If a `START_BLOCK` is provided, it uses that; otherwise, it starts from the current latest block.
+3.  **State Restoration**: It determines the block number to start scanning from. If a `START_BLOCK` is provided, it uses that; otherwise, it starts from the current latest block.
 4.  **Polling Loop**: The script enters an infinite `while True` loop.
 5.  **Block Scanning**: In each iteration, it checks the latest block number on the source chain. If the latest block is ahead of the `last_processed_block`, it defines a range of blocks to scan.
 6.  **Event Filtering**: It uses `web3.py`'s event filtering mechanism (`create_filter`) to efficiently query the node for any `BridgeTransferInitiated` events within that block range.
@@ -91,7 +99,7 @@ SOURCE_BRIDGE_ADDRESS="0x..."
 DESTINATION_BRIDGE_ADDRESS="0x..."
 
 # Private key of the "validator" or "oracle" account.
-# This account pays for gas to submit the `releaseTokens` transaction on the destination chain.
+# This account is used to pay for gas to submit the `releaseTokens` transaction on the destination chain.
 # IMPORTANT: Use a key from a test wallet with testnet funds ONLY. DO NOT USE A MAINNET KEY.
 LISTENER_PRIVATE_KEY="0x..."
 
