@@ -2,7 +2,7 @@
 
 This repository contains a Python-based simulation of a critical component for a cross-chain bridge: the Event Listener. This component, often run by validators or oracles, is responsible for watching for specific events on a source blockchain (e.g., tokens being locked) and initiating corresponding actions on a destination blockchain (e.g., minting wrapped tokens).
 
-This script is designed to be architecturally sound, robust, and demonstrative of real-world decentralized application backend services.
+This script is designed to be architecturally sound and robust, demonstrating the patterns used in real-world decentralized application backend services.
 
 ## Concept
 
@@ -41,7 +41,6 @@ The script is designed with a clear separation of concerns, organized into sever
     -   Passing any found events to the `BridgeEventHandler` for processing.
     -   Handling RPC connection errors and other exceptions gracefully.
 
-
 ## How it Works
 
 The script follows a logical, sequential flow:
@@ -57,7 +56,7 @@ The script follows a logical, sequential flow:
 9.  **State Update**: After processing the events in a block range, the `BridgeEventListener` updates its `last_processed_block` counter to ensure it doesn't scan the same blocks again.
 10. **Wait**: The script then sleeps for a configurable interval (`POLL_INTERVAL_SECONDS`) before starting the next iteration of the loop.
 
-## Usage Example
+## Getting Started
 
 Follow these steps to run the simulation.
 
@@ -91,8 +90,9 @@ DESTINATION_CHAIN_RPC="https://polygon-mumbai.g.alchemy.com/v2/YOUR_ALCHEMY_API_
 SOURCE_BRIDGE_ADDRESS="0x..."
 DESTINATION_BRIDGE_ADDRESS="0x..."
 
-# IMPORTANT: Private key of the account that will pay for gas on the destination chain.
-# Use a key from a test wallet with testnet funds ONLY. DO NOT USE A MAINNET KEY.
+# Private key of the "validator" or "oracle" account.
+# This account pays for gas to submit the `releaseTokens` transaction on the destination chain.
+# IMPORTANT: Use a key from a test wallet with testnet funds ONLY. DO NOT USE A MAINNET KEY.
 LISTENER_PRIVATE_KEY="0x..."
 
 # (Optional) The block number to start scanning from. If 0 or not set, starts from the latest block.
@@ -104,10 +104,10 @@ POLL_INTERVAL_SECONDS=15
 
 **4. Run the script:**
 
-Execute the Python script from your terminal.
+Execute the main Python script from your terminal.
 
 ```bash
-python script.py
+python main.py
 ```
 
 **Expected Output:**
@@ -121,8 +121,8 @@ The script will start logging its activity to the console. When it finds a new `
 2023-10-27 14:30:31,789 - INFO - [BridgeEventListener] - Scanning for 'BridgeTransferInitiated' events from block 4500124 to 4500125
 2023-10-27 14:30:32,912 - INFO - [BridgeEventListener] - Found 1 new events.
 2023-10-27 14:30:32,913 - INFO - [BridgeEventHandler] - Processing new event: transactionId=0xabc123...
-2023-10-27 14:30:32,914 - INFO - [BridgeEventHandler] - Preparing to release 100000000 of token 0x... to 0x... on destination chain for source tx_id 0xabc123...
+2023-10-27 14:30:32,914 - INFO - [BridgeEventHandler] - Preparing to release 100000000 of token 0x... to 0x... on destination chain for source transactionId 0xabc123...
 2023-10-27 14:30:33,567 - INFO - [BridgeEventHandler] - [SIMULATION] Would have sent transaction to release tokens.
 2023-10-27 14:30:33,568 - INFO - [BridgeEventHandler] - [SIMULATION] Signed Tx: 0xdef456...
-2023-10-27 14:30:33,569 - INFO - [BridgeEventHandler] - Successfully processed event for tx_id 0xabc123...
+2023-10-27 14:30:33,569 - INFO - [BridgeEventHandler] - Successfully processed event for transactionId 0xabc123...
 ```
